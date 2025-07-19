@@ -19,8 +19,8 @@ public class UserDto {// pascal naming
     private Long id;
     private String name;
     private String email;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime createdAt;
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    private LocalDateTime createdAt;
 
     //@JsonInclude(JsonInclude.Include.NON_NULL)
     //private String phoneNumber;

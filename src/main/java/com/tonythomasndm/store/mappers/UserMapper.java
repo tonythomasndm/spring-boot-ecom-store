@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")// so that spring cna create beans at runtimme
 public interface UserMapper {
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    //@Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     UserDto toDto(User user);// mqpstruct will automatically implemen the code
 }
 
