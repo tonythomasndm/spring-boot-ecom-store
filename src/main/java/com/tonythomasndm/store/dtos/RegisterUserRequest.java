@@ -1,5 +1,6 @@
 package com.tonythomasndm.store.dtos;
 
+import com.tonythomasndm.store.validation.Lowercase;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -18,6 +19,7 @@ public class RegisterUserRequest {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
+    @Lowercase(message = "Email must be lowercase")
     private String email;
 
     @NotBlank(message ="Password is required")
@@ -26,3 +28,7 @@ public class RegisterUserRequest {
 
 
 }
+
+// no busisness rules or logic cna be implementd in validation - cutom validation
+// bcoiz these are traiggered everytime we make request , if some field is invalid, we sont wnana waste tiem querying teh datbase
+// so fgirst we vaidate the input-> then bussines rules validation

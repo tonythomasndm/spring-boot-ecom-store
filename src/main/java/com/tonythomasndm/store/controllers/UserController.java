@@ -12,10 +12,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,12 +45,20 @@ public class UserController {
 
 // when we succesffully create a request we chould giev tehrb eponse of 201
     // methodargumentnOTVALIDEXCEPTION
+    // pelaced with ? to make it more flexible
     @PostMapping
-    public ResponseEntity<UserDto> createUser(
+    public ResponseEntity<?> registerUser(
             @Valid @RequestBody RegisterUserRequest request,
             UriComponentsBuilder uriBuilder
     ) {// include requets body to reocve the requetsb bodyelse null values in backend - common error
         // always do pone baby step at a time
+
+        if(userRepository.existsByEmail(request.getEmail())){
+            return ResponseEntity.badRequest().body(
+                    Map.of("email","Email is already regsitered.")
+            );
+        }
+
         var user = userMapper.toEntity(request);
         userRepository.save(user);
         var userDto = userMapper.toDto(user);
@@ -129,6 +140,7 @@ public class UserController {
                 .map(userMapper::toDto)
                 .toList();
     }
+
 
 // if u chnsage the query paraneter -name
 
