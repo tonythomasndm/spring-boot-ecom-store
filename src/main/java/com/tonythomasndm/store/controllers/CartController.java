@@ -7,6 +7,9 @@ import com.tonythomasndm.store.dtos.UpdateCartItemRequest;
 import com.tonythomasndm.store.exceptions.CartNotFoundException;
 import com.tonythomasndm.store.exceptions.ProductNotFoundException;
 import com.tonythomasndm.store.services.CartService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,9 +20,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Map;
 import java.util.UUID;
 
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/carts")// with restful apis we often use plural names
+@Tag(name = "Carts")//previously it was cart-controller, now Carts
 public class CartController {
 
     private final CartService cartService;
@@ -32,7 +37,9 @@ public class CartController {
     }
 
     @PostMapping("/{cartId}/items")
+    @Operation(summary = "Adds a product to the Cart.")
     public ResponseEntity<CartItemDto> addToCarts(
+            @Parameter(description = "The Id of the Cart.")
             @PathVariable UUID cartId,
             @Valid @RequestBody AddItemToCartRequest request
     ) {
