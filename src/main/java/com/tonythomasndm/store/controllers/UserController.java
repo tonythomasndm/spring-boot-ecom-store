@@ -1,14 +1,19 @@
 package com.tonythomasndm.store.controllers;
 
+import com.tonythomasndm.store.dtos.ChangePasswordRequest;
+import com.tonythomasndm.store.dtos.RegisterUserRequest;
+import com.tonythomasndm.store.dtos.UpdateUserRequest;
 import com.tonythomasndm.store.dtos.UserDto;
 import com.tonythomasndm.store.entities.User;
 import com.tonythomasndm.store.mappers.UserMapper;
 import com.tonythomasndm.store.repositories.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Set;
@@ -35,12 +40,78 @@ public class UserController {
     // opften used for creatinga nd updating objects - we dont need query oparmanter , mpost common type - json
     // 405 method not allowed - bcoz we havent implemetd the rnpoint taht reciveds post request
 
-
+// when we succesffully create a request we chould giev tehrb eponse of 201
+    // methodargumentnOTVALIDEXCEPTION
     @PostMapping
-    public UserDto createUser(@RequestBody UserDto data) {// include requets body to reocve the requetsb bodyelse null values in backend - common error
-        return data;
-    }// if we use emailx instead of email, we get null, spring is unable to intialize
-    // deserilaizationa dn serialization
+    public ResponseEntity<UserDto> createUser(
+            @Valid @RequestBody RegisterUserRequest request,
+            UriComponentsBuilder uriBuilder
+    ) {// include requets body to reocve the requetsb bodyelse null values in backend - common error
+        // always do pone baby step at a time
+        var user = userMapper.toEntity(request);
+        userRepository.save(user);
+        var userDto = userMapper.toDto(user);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
+        return ResponseEntity.created(uri).body(userDto);// created giuve sa bopdybuilder
+        //return userMapper.toDto(userRepository.save(userMapper.toEntity(request)));
+    }// if we use invalid property, emailx instead of email, we get null, spring is unable to intialize
+    // deserilaizationa dn serialization, id id null bcoz it was not provided
+    // http response also ghave headers
+
+    // u dont need to give bodydto - it is fine for internal apis- they donts et statutus 201
+    // but for public apis - best tof oloow standard restful conventions
+
+    // for updating the resource, we should set teh requets to put or patch - ref a particular resource
+    // put for updtaing teh entire resource - often used
+    // patch for updating or one or more properties only
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable(name="id") Long id,
+            @RequestBody UpdateUserRequest request
+            ){
+
+        var user = userRepository.findById(id).orElse(null);
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+        userMapper.updateEntity(request,user);
+        userRepository.save(user);
+        return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(
+           @PathVariable Long id
+    ){
+        var user = userRepository.findById(id).orElse(null);
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        userRepository.delete(user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/change-password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable(name="id") Long id,
+            @RequestBody ChangePasswordRequest request
+    ){
+        var user = userRepository.findById(id).orElse(null);
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        if(!user.getPassword().equals(request.getOldPassword())){
+            return new  ResponseEntity<>(HttpStatus.UNAUTHORIZED);//401
+        }else{
+            user.setPassword(request.getNewPassword());// we should sue mapper when dealing with alrge objects
+            userRepository.save(user);
+        }
+        return ResponseEntity.noContent().build();//204
+        // currently we are storing the apssword by text we should avoid it
+    }
 
     @GetMapping
     public Iterable<UserDto> getSortedUsers(

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class UserDto {// pascal naming
-    //@JsonIgnore
+    //@JsonIgnore// applied at bother serializationa dn deserilaization
     //@JsonProperty("user_id")
 
     private Long id;
