@@ -1,5 +1,6 @@
 package com.tonythomasndm.store.config;
 
+import com.tonythomasndm.store.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
@@ -45,7 +47,7 @@ public class SecurityConfig {// httpSecurity is a builder object
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception  // this defines how http request are secure
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception  // this defines how http request are secure
     {
         // stateless sessions(token based autheication)
         // disabke CSRF
@@ -60,7 +62,9 @@ public class SecurityConfig {// httpSecurity is a builder object
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                     .requestMatchers(HttpMethod.POST, "/users").permitAll()
                     .anyRequest().authenticated()
-            );
+            )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        ;
 
         return http.build();
     }

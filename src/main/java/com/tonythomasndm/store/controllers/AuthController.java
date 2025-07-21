@@ -1,6 +1,11 @@
 package com.tonythomasndm.store.controllers;
 
+import com.tonythomasndm.store.dtos.JwtResponse;
 import com.tonythomasndm.store.dtos.LoginUserRequest;
+import com.tonythomasndm.store.dtos.UserDto;
+import com.tonythomasndm.store.mappers.UserMapper;
+import com.tonythomasndm.store.repositories.UserRepository;
+import com.tonythomasndm.store.services.JwtService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -8,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -16,9 +23,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> loginUser(
+    public ResponseEntity<JwtResponse> loginUser(
             @Valid @RequestBody LoginUserRequest request
     ) {
         authenticationManager.authenticate(
@@ -27,8 +37,31 @@ public class AuthController {
                         request.getPassword()
                 )
         );
-        return ResponseEntity.ok().build();
+
+        var token = jwtService.generateToken(request.getEmail());
+        return ResponseEntity.ok(new JwtResponse(token));
     }
+
+    @PostMapping("/validate")
+    public boolean validateToken(@RequestHeader("Authorization") String authHeader) {
+        System.out.println("VALIDATE CALLED");
+        var token = authHeader.replace("Bearer ", "");
+        return jwtService.validateToken(token);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> me() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var email =(String) authentication.getPrincipal();
+
+        var user= userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            return ResponseEntity.notFound().build();
+        }
+        var userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(userDto);
+    }
+
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Void> handleBadCredentialsException() {
