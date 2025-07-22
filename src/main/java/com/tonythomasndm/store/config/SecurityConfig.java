@@ -74,12 +74,11 @@ public class SecurityConfig {// httpSecurity is a builder object
                 {
                     c.authenticationEntryPoint(
                             new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-                    c.accessDeniedHandler((request, response, accessDeniedException) -> {
-                        response.setStatus(HttpStatus.FORBIDDEN.value());
-                    });
-                });// by default spring witl rteurn 401 nerror
-        ;
-        ;
+                    c.accessDeniedHandler(((request, response, accessDeniedException) ->
+                        response.setStatus(HttpStatus.FORBIDDEN.value())));
+                });
+              // by default spring witl rteurn 401 nerror
+
 
         return http.build();
     }
