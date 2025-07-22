@@ -1,48 +1,56 @@
 package com.tonythomasndm.store.services;
 
+import com.tonythomasndm.store.config.JwtConfig;
+import com.tonythomasndm.store.entities.User;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@AllArgsConstructor
 @Service
 public class JwtService {
-    @Value("${spring.jwt.secret}")
-    private String secret;
+    private final JwtConfig jwtConfig;
 
-    public String generateToken(String email) {
-        final long tokenExpiration = 86400; //1 day
-        return Jwts.builder()
-                .subject(email)
+    public Jwt generateAccessToken(User user) {
+        // paylaod should be less heavy
+        return generateToken(user, jwtConfig.getAccessTokenExpiration());
+    }
+
+    public Jwt generateRefreshToken(User user) {
+        return generateToken(user, jwtConfig.getRefreshTokenExpiration());
+    }
+
+    private Jwt generateToken(User user, long tokenExpiration) {
+        var claims = Jwts.claims()
+                .subject(user.getId().toString())
+                .add("email", user.getEmail())
+                .add("name", user.getName())
+                .add("role", user.getRole())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                .compact();
+                .build();
+
+        return new Jwt(claims,jwtConfig.getSecretKey());
+
     }
 
-    public boolean validateToken(String token) {
-        try {
-            var claims = getClaims(token);
-            return claims.getExpiration().after(new Date());
-            // these mthjods are only inthis version, tehre are many imporvements adn all
-        }
-        catch (JwtException e) {// invalid claim will throw an exception
-            return false;
-        }
-    }
-
-    private Claims getClaims(String token) {
-        // claims are thr poerpties we know qawhat the token
+    private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .verifyWith(jwtConfig.getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    public String getEmailFromToken(String token) {
-        return getClaims(token).getSubject();
+    public Jwt parse(String token) {
+        try {
+            var claims = getClaimsFromToken(token);
+            return new Jwt(claims, jwtConfig.getSecretKey());
+        } catch (ExpiredJwtException e){
+            return null;
+        }
+
     }
 }

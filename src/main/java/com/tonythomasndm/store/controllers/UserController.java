@@ -4,6 +4,7 @@ import com.tonythomasndm.store.dtos.ChangePasswordRequest;
 import com.tonythomasndm.store.dtos.RegisterUserRequest;
 import com.tonythomasndm.store.dtos.UpdateUserRequest;
 import com.tonythomasndm.store.dtos.UserDto;
+import com.tonythomasndm.store.entities.Role;
 import com.tonythomasndm.store.entities.User;
 import com.tonythomasndm.store.mappers.UserMapper;
 import com.tonythomasndm.store.repositories.UserRepository;
@@ -64,6 +65,7 @@ public class UserController {
 
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);// we dont have it in the usermapper techncially - bcoz it is magic implemenatation
         userRepository.save(user);
         var userDto = userMapper.toDto(user);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
