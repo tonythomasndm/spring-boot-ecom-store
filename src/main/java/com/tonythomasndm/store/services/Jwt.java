@@ -7,15 +7,10 @@ import lombok.AllArgsConstructor;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-
+@AllArgsConstructor
 public class Jwt {
     private final Claims claims;
     private final SecretKey key;
-
-    public Jwt(Claims claims, SecretKey key) {
-        this.claims = claims;
-        this.key = key;
-    }
 
     public boolean isExpired() {
         return claims.getExpiration().before(new Date());

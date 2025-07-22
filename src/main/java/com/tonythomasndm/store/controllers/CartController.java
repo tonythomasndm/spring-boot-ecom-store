@@ -1,9 +1,6 @@
 package com.tonythomasndm.store.controllers;
 
-import com.tonythomasndm.store.dtos.AddItemToCartRequest;
-import com.tonythomasndm.store.dtos.CartDto;
-import com.tonythomasndm.store.dtos.CartItemDto;
-import com.tonythomasndm.store.dtos.UpdateCartItemRequest;
+import com.tonythomasndm.store.dtos.*;
 import com.tonythomasndm.store.exceptions.CartNotFoundException;
 import com.tonythomasndm.store.exceptions.ProductNotFoundException;
 import com.tonythomasndm.store.services.CartService;
@@ -37,9 +34,9 @@ public class CartController {
     }
 
     @PostMapping("/{cartId}/items")
-    @Operation(summary = "Adds a product to the Cart.")
+    @Operation(summary = "Adds a product to the  Cart.")
     public ResponseEntity<CartItemDto> addToCarts(
-            @Parameter(description = "The Id of the Cart.")
+            @Parameter(description = "The Id of the Cart. ")
             @PathVariable UUID cartId,
             @Valid @RequestBody AddItemToCartRequest request
     ) {
@@ -83,16 +80,16 @@ public class CartController {
 
     // we cna handle this logic at central place using an excpetion handler - prefereed to keep it at bottomm
     @ExceptionHandler(CartNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCartNotFound(){
+    public ResponseEntity<ErrorDto> handleCartNotFound(){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                Map.of("error", "Cart was not found.")
+                new ErrorDto("Cart not found.")
         );
     }
 
     @ExceptionHandler({ProductNotFoundException.class})
-    public ResponseEntity<Map<String,String>> handleProductNotFound(){
+    public ResponseEntity<ErrorDto> handleProductNotFound(){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                Map.of("error", "Product was not found in the cart.")
+                new ErrorDto("Product not found.")
         );
     }
 }
