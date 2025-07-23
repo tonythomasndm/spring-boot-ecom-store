@@ -7,9 +7,9 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
-import com.tonythomasndm.store.entities.Order;
-import com.tonythomasndm.store.entities.OrderItem;
-import com.tonythomasndm.store.entities.PaymentStatus;
+import com.tonythomasndm.store.orders.Order;
+import com.tonythomasndm.store.orders.OrderItem;
+import com.tonythomasndm.store.orders.PaymentStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

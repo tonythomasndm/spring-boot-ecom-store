@@ -1,12 +1,12 @@
 package com.tonythomasndm.store.payments;
 
-import com.tonythomasndm.store.entities.Order;
-import com.tonythomasndm.store.exceptions.CartEmptyException;
-import com.tonythomasndm.store.exceptions.CartNotFoundException;
-import com.tonythomasndm.store.repositories.CartRepository;
-import com.tonythomasndm.store.repositories.OrderRepository;
-import com.tonythomasndm.store.services.AuthService;
-import com.tonythomasndm.store.services.CartService;
+import com.tonythomasndm.store.orders.Order;
+import com.tonythomasndm.store.carts.CartEmptyException;
+import com.tonythomasndm.store.carts.CartNotFoundException;
+import com.tonythomasndm.store.carts.CartRepository;
+import com.tonythomasndm.store.orders.OrderRepository;
+import com.tonythomasndm.store.auth.AuthService;
+import com.tonythomasndm.store.carts.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

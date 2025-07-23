@@ -1,6 +1,6 @@
 package com.tonythomasndm.store.payments;
 
-import com.tonythomasndm.store.entities.PaymentStatus;
+import com.tonythomasndm.store.orders.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

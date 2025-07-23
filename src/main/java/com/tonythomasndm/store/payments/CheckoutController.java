@@ -1,9 +1,9 @@
 package com.tonythomasndm.store.payments;
 
-import com.tonythomasndm.store.dtos.ErrorDto;
-import com.tonythomasndm.store.exceptions.CartEmptyException;
-import com.tonythomasndm.store.exceptions.CartNotFoundException;
-import com.tonythomasndm.store.repositories.OrderRepository;
+import com.tonythomasndm.store.common.ErrorDto;
+import com.tonythomasndm.store.carts.CartEmptyException;
+import com.tonythomasndm.store.carts.CartNotFoundException;
+import com.tonythomasndm.store.orders.OrderRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

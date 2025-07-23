@@ -1,6 +1,6 @@
 package com.tonythomasndm.store.payments;
 
-import com.tonythomasndm.store.entities.Order;
+import com.tonythomasndm.store.orders.Order;
 
 import java.util.Optional;
 
