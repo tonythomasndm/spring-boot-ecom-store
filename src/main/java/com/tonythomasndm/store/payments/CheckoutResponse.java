@@ -1,4 +1,4 @@
-package com.tonythomasndm.store.dtos;
+package com.tonythomasndm.store.payments;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

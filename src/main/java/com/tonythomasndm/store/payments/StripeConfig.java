@@ -1,4 +1,4 @@
-package com.tonythomasndm.store.config;
+package com.tonythomasndm.store.payments;
 
 import com.stripe.Stripe;
 import jakarta.annotation.PostConstruct;

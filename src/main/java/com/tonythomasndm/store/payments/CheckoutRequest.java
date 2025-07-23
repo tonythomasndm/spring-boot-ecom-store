@@ -1,4 +1,4 @@
-package com.tonythomasndm.store.dtos;
+package com.tonythomasndm.store.payments;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

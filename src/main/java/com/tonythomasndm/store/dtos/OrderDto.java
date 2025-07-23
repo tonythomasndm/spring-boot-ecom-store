@@ -1,7 +1,5 @@
 package com.tonythomasndm.store.dtos;
 
-import com.tonythomasndm.store.entities.OrderItem;
-import com.tonythomasndm.store.entities.OrderStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
